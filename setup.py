@@ -25,7 +25,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.txt')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
-setup(name='repoze.bfg.contentprovider',
+setup(name='repoze.bfg.viewgroup',
       version=__version__,
       description='An anlologue of Zope 3 "content providers" for repoze.bfg',
       long_description=README + '\n\n' +  CHANGES,
@@ -48,7 +48,7 @@ setup(name='repoze.bfg.contentprovider',
       zip_safe=False,
       tests_require = [],
       install_requires=[],
-      test_suite="repoze.bfg.contentprovider",
+      test_suite="repoze.bfg.viewgroup",
       entry_points = """\
       """
       )
