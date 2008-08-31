@@ -16,16 +16,16 @@ from repoze.bfg.viewgroup.group import ViewGroup
 """
 <bfg:viewgroup
   name="headers"
-  for=".interfaces.IContent"
   viewnames="header1 header2 header3"
+  for=".interfaces.IContent"
   request_type="repoze.bfg.interfaces.IRequest"
 />
 """
 
 def viewgroup(_context,
               name="",
-              for_=None,
               viewnames=None,
+              for_=None,
               request_type=IRequest,
               ):
 
@@ -65,6 +65,7 @@ class IViewGroupDirective(Interface):
         description=(u"The viewnames used to provide the content (in "
                      u"the order which they will be rendered)"),
         required=False,
+        value_type=TextLine(),
         )
 
     request_type = GlobalObject(

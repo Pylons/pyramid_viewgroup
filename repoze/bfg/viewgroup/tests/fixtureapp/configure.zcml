@@ -1,0 +1,27 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:bfg="http://namespaces.repoze.org/bfg"
+	           i18n_domain="repoze.bfg">
+
+  <include package="repoze.bfg" />
+  <include package="repoze.bfg.viewgroup" file="meta.zcml"/>
+
+  <bfg:view
+      view=".views.fixture_view"
+      for=".models.IFixture"
+      name="one"
+      />
+
+  <bfg:view
+      view=".views.fixture_view"
+      for=".models.IFixture"
+      name="two"
+      />
+
+  <bfg:viewgroup
+    name="group"
+    viewnames="one two"
+    for=".models.IFixture"
+    request_type=".views.IDummy"
+   />
+
+</configure>

@@ -46,8 +46,8 @@ setup(name='repoze.bfg.viewgroup',
       include_package_data=True,
       namespace_packages=['repoze', 'repoze.bfg'],
       zip_safe=False,
-      tests_require = [],
-      install_requires=[],
+      tests_require = ['repoze.bfg'],
+      install_requires=['repoze.bfg'],
       test_suite="repoze.bfg.viewgroup",
       entry_points = """\
       """
