@@ -140,6 +140,49 @@ class TestViewGroup(unittest.TestCase, PlacelessSetup):
         response = group(context, request)
         self.assertEqual(''.join(response.app_iter), 'Response1Response2')
 
+class TestProvider(unittest.TestCase, PlacelessSetup):
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+
+    def tearDown(self):
+        PlacelessSetup.tearDown(self)
+
+    def _getTargetClass(self):
+        from repoze.bfg.viewgroup.group import Provider
+        return Provider
+
+    def _makeOne(self, context, request):
+        return self._getTargetClass()(context, request)
+
+    def _registerView(self, app, name, *for_):
+        import zope.component
+        gsm = zope.component.getGlobalSiteManager()
+        from repoze.bfg.interfaces import IView
+        gsm.registerAdapter(app, for_, IView, name)
+
+    def test_call(self):
+        response1 = DummyResponse()
+        response1.app_iter = ['Response1']
+        view1 = make_view(response1)
+        self._registerView(view1, 'view1', None, None)
+
+        response2 = DummyResponse()
+        response2.app_iter = ['Response2']
+        view2 = make_view(response2)
+        self._registerView(view2, 'view2', None, None)
+
+        from repoze.bfg.viewgroup.group import ViewGroup
+
+        group = ViewGroup('viewgroup', ['view1', 'view2'])
+        self._registerView(group, 'viewgroup', None, None)
+
+        context = DummyContext()
+        request = DummyRequest()
+        provider = self._makeOne(context, request)
+        self.assertEqual(provider('view1'), 'Response1')
+        self.assertEqual(provider('view2'), 'Response2')
+        self.assertEqual(provider('viewgroup'), 'Response1Response2')
+
 class TestFixtureApp(unittest.TestCase, PlacelessSetup):
     def setUp(self):
         PlacelessSetup.setUp(self)

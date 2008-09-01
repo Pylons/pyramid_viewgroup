@@ -6,15 +6,15 @@
   <include package="repoze.bfg.viewgroup" file="meta.zcml"/>
 
   <bfg:view
+      name="one"
       view=".views.fixture_view"
       for=".models.IFixture"
-      name="one"
       />
 
   <bfg:view
+      name="two"
       view=".views.fixture_view"
       for=".models.IFixture"
-      name="two"
       />
 
   <bfg:viewgroup
