@@ -109,7 +109,7 @@ class TestViewGroup(unittest.TestCase, PlacelessSetup):
         context = DummyContext()
         request = DummyRequest()
         response = group(context, request)
-        self.assertEqual(response.app_iter[0], '')
+        self.assertEqual(''.join(response.app_iter), '')
 
     def test_viewname_not_found(self):
         secpol = DummySecurityPolicy()
@@ -138,7 +138,7 @@ class TestViewGroup(unittest.TestCase, PlacelessSetup):
         context = DummyContext()
         request = DummyRequest()
         response = group(context, request)
-        self.assertEqual(response.app_iter[0], 'Response1Response2')
+        self.assertEqual(''.join(response.app_iter), 'Response1Response2')
 
 class TestFixtureApp(unittest.TestCase, PlacelessSetup):
     def setUp(self):

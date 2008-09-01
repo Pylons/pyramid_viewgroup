@@ -1,14 +1,12 @@
+import itertools
+
 from zope.interface import implements
-from zope.component import queryMultiAdapter
-from zope.component import queryUtility
 
 from webob import Response
 
-from repoze.bfg.router import isResponse
-
-from repoze.bfg.interfaces import ISecurityPolicy
-from repoze.bfg.interfaces import IViewPermission
 from repoze.bfg.interfaces import IView
+from repoze.bfg.security import Unauthorized
+from repoze.bfg.view import render_view_to_iterable
 
 class ViewGroup(object):
     implements(IView)
@@ -18,31 +16,19 @@ class ViewGroup(object):
         self.viewnames = viewnames
 
     def __call__(self, context, request):
-        rendering = []
-        security_policy = queryUtility(ISecurityPolicy)
+        renderings = []
 
         for viewname in self.viewnames:
-            permission = queryMultiAdapter((context, request), IViewPermission,
-                                           name=viewname)
-            if permission is not None:
-                if not permission(security_policy):
-                    continue
-
-            response = queryMultiAdapter((context, request), IView,
-                                         name=viewname)
-            if response is None:
+            try:
+                iterable = render_view_to_iterable(context, request, viewname)
+            except Unauthorized:
+                continue
+            if iterable is None:
                 raise ValueError(
-                    'No such view named %r for %r during viewgroup rendering' %
-                    (viewname, (context, request)))
+                    'No such view named %s for viewgroup %s' %
+                    (viewname, self.name)
+                    )
+            renderings.append(iterable)
 
-            if not isResponse(response):
-                raise ValueError('response from %r was not IResponse: %r' %
-                                 (viewname, response))
+        return Response(app_iter=itertools.chain(*renderings))
 
-            rendering.append(''.join(response.app_iter))
-
-        return Response(''.join(rendering))
-    
-    
-
-        
