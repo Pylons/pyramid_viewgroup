@@ -27,7 +27,7 @@ class TestViewGroupDirective(unittest.TestCase, PlacelessSetup):
         actions = context.actions
         from repoze.bfg.interfaces import IRequest
         from repoze.bfg.interfaces import IView
-        from zope.component.zcml import handler
+        from repoze.bfg.viewgroup.zcml import handler
 
         self.assertEqual(len(actions), 1)
 
@@ -53,7 +53,7 @@ class TestViewGroupDirective(unittest.TestCase, PlacelessSetup):
         f(context, 'viewgroup', ['a', 'b', 'c'], IFoo, request_type=IDummy)
         actions = context.actions
         from repoze.bfg.interfaces import IView
-        from zope.component.zcml import handler
+        from repoze.bfg.viewgroup.zcml import handler
         from zope.component.interface import provideInterface
 
         self.assertEqual(len(actions), 2)

@@ -1,8 +1,8 @@
 from zope.interface import Interface
 from zope.component.interface import provideInterface
+from zope.component import getSiteManager
 
 from zope.configuration.exceptions import ConfigurationError
-from zope.component.zcml import handler
 from zope.configuration.fields import GlobalObject
 from zope.configuration.fields import Tokens
 
@@ -21,6 +21,10 @@ from repoze.bfg.viewgroup.group import ViewGroup
   request_type="repoze.bfg.interfaces.IRequest"
 />
 """
+
+def handler(methodName, *args, **kwargs):
+    method = getattr(getSiteManager(), methodName)
+    method(*args, **kwargs)
 
 def viewgroup(_context,
               name="",
