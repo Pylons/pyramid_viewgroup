@@ -1,4 +1,4 @@
-Next release
+0.2
 
   Changes to support upcoming bfg release (which does not require
   zope.security, so we don't either).
