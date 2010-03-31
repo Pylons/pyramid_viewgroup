@@ -1,14 +1,15 @@
 import unittest
 
-from zope.component.testing import PlacelessSetup
 from zope.interface import Interface
 
-class TestViewGroupDirective(unittest.TestCase, PlacelessSetup):
+class TestViewGroupDirective(unittest.TestCase):
     def setUp(self):
-        PlacelessSetup.setUp(self)
+        from repoze.bfg.configuration import Configurator
+        self.config = Configurator()
+        self.config.hook_zca()
 
     def tearDown(self):
-        PlacelessSetup.tearDown(self)
+        self.config.end()
 
     def _getFUT(self):
         from repoze.bfg.viewgroup.zcml import viewgroup
@@ -20,91 +21,52 @@ class TestViewGroupDirective(unittest.TestCase, PlacelessSetup):
         context = DummyContext()
         self.assertRaises(ConfigurationError, f, context)
 
-    def test_only_viewnames(self):
-        f = self._getFUT()
-        context = DummyContext()
-        f(context, 'viewgroup', ['a', 'b', 'c'])
-        actions = context.actions
-        from repoze.bfg.interfaces import IRequest
+    def test_call(self):
         from repoze.bfg.interfaces import IView
-        from repoze.bfg.viewgroup.zcml import handler
-
-        self.assertEqual(len(actions), 1)
-
-        regadapt = actions[0]
-        regadapt_discriminator = ('view', None, 'viewgroup', IRequest, IView)
-        self.assertEqual(regadapt['discriminator'], regadapt_discriminator)
-        self.assertEqual(regadapt['callable'], handler)
-        self.assertEqual(regadapt['args'][0], 'registerAdapter')
-        self.assertEqual(regadapt['args'][1].name, 'viewgroup')
-        self.assertEqual(regadapt['args'][1].viewnames, ['a', 'b', 'c'])
-        self.assertEqual(regadapt['args'][2], (None, IRequest))
-        self.assertEqual(regadapt['args'][3], IView)
-        self.assertEqual(regadapt['args'][4], 'viewgroup')
-        self.assertEqual(regadapt['args'][5], None)
-
-    def test_with_request_type(self):
+        from repoze.bfg.interfaces import IRequest
         f = self._getFUT()
         context = DummyContext()
         class IFoo:
             pass
         def view(context, request):
             pass
-        f(context, 'viewgroup', ['a', 'b', 'c'], IFoo, request_type=IDummy)
+        f(context, 'viewgroup', ['a', 'b', 'c'], IFoo)
         actions = context.actions
-        from repoze.bfg.interfaces import IView
-        from repoze.bfg.viewgroup.zcml import handler
-        from zope.component.interface import provideInterface
 
-        self.assertEqual(len(actions), 2)
+        self.assertEqual(len(actions), 1)
 
-        provide = actions[0]
-        self.assertEqual(provide['discriminator'], None)
-        self.assertEqual(provide['callable'], provideInterface)
-        self.assertEqual(provide['args'][0], '')
-        self.assertEqual(provide['args'][1], IFoo)
+        action = actions[0]
+        registrar = action['callable']
+        registrar()
+        reg = self.config.registry
+        wrapper = reg.adapters.lookup((IRequest, Interface), IView,
+                                      name='viewgroup')
+        self.assertEqual(wrapper, None)
 
-        regadapt = actions[1]
-        regadapt_discriminator = ('view', IFoo, 'viewgroup', IDummy, IView)
-        self.assertEqual(regadapt['discriminator'], regadapt_discriminator)
-        self.assertEqual(regadapt['callable'], handler)
-        self.assertEqual(regadapt['args'][0], 'registerAdapter')
-        self.assertEqual(regadapt['args'][1].name, 'viewgroup')
-        self.assertEqual(regadapt['args'][1].viewnames, ['a', 'b', 'c'])
-        self.assertEqual(regadapt['args'][2], (IFoo, IDummy))
-        self.assertEqual(regadapt['args'][3], IView)
-        self.assertEqual(regadapt['args'][4], 'viewgroup')
-        self.assertEqual(regadapt['args'][5], None)
-
-class TestViewGroup(unittest.TestCase, PlacelessSetup):
+class TestViewGroup(unittest.TestCase):
     def setUp(self):
-        PlacelessSetup.setUp(self)
+        from repoze.bfg.configuration import Configurator
+        self.config = Configurator()
+        self.config.begin()
+        self.config.hook_zca()
 
     def tearDown(self):
-        PlacelessSetup.tearDown(self)
+        self.config.end()
 
     def _getTargetClass(self):
         from repoze.bfg.viewgroup.group import ViewGroup
         return ViewGroup
 
-    def _registerSecurityPolicy(self, secpol):
-        import zope.component
-        gsm = zope.component.getGlobalSiteManager()
-        from repoze.bfg.interfaces import ISecurityPolicy
-        gsm.registerUtility(secpol, ISecurityPolicy)
+    def _registerSecurityPolicy(self):
+        self.config.testing_securitypolicy()
 
-    def _registerView(self, app, name, *for_):
-        import zope.component
-        gsm = zope.component.getGlobalSiteManager()
-        from repoze.bfg.interfaces import IView
-        gsm.registerAdapter(app, for_, IView, name)
+    def _registerView(self, view, name):
+        self.config.add_view(view, name=name)
 
     def _makeOne(self, name, viewnames):
         return self._getTargetClass()(name, viewnames)
 
     def test_no_viewnames(self):
-        secpol = DummySecurityPolicy()
-        self._registerSecurityPolicy(secpol)
         group = self._makeOne('viewgroup', [])
         context = DummyContext()
         request = DummyRequest()
@@ -112,8 +74,7 @@ class TestViewGroup(unittest.TestCase, PlacelessSetup):
         self.assertEqual(''.join(response.app_iter), '')
 
     def test_viewname_not_found(self):
-        secpol = DummySecurityPolicy()
-        self._registerSecurityPolicy(secpol)
+        self._registerSecurityPolicy()
 
         group = self._makeOne('viewgroup', ['view1'])
         context = DummyContext()
@@ -121,31 +82,33 @@ class TestViewGroup(unittest.TestCase, PlacelessSetup):
         self.assertRaises(ValueError, group, context, request)
 
     def test_all_permitted(self):
-        secpol = DummySecurityPolicy()
-        self._registerSecurityPolicy(secpol)
+        self._registerSecurityPolicy()
 
         response1 = DummyResponse()
         response1.app_iter = ['Response1']
         view1 = make_view(response1)
-        self._registerView(view1, 'view1', None, None)
+        self._registerView(view1, 'view1')
 
         response2 = DummyResponse()
         response2.app_iter = ['Response2']
         view2 = make_view(response2)
-        self._registerView(view2, 'view2', None, None)
+        self._registerView(view2, 'view2')
 
         group = self._makeOne('viewgroup', ['view1', 'view2'])
         context = DummyContext()
         request = DummyRequest()
+        request.registry = self.config.registry
         response = group(context, request)
         self.assertEqual(''.join(response.app_iter), 'Response1Response2')
 
-class TestProvider(unittest.TestCase, PlacelessSetup):
+class TestProvider(unittest.TestCase):
     def setUp(self):
-        PlacelessSetup.setUp(self)
+        from repoze.bfg.configuration import Configurator
+        self.config = Configurator()
+        self.config.hook_zca()
 
     def tearDown(self):
-        PlacelessSetup.tearDown(self)
+        self.config.end()
 
     def _getTargetClass(self):
         from repoze.bfg.viewgroup.group import Provider
@@ -154,59 +117,51 @@ class TestProvider(unittest.TestCase, PlacelessSetup):
     def _makeOne(self, context, request):
         return self._getTargetClass()(context, request)
 
-    def _registerView(self, app, name, *for_):
-        import zope.component
-        gsm = zope.component.getGlobalSiteManager()
-        from repoze.bfg.interfaces import IView
-        gsm.registerAdapter(app, for_, IView, name)
+    def _registerView(self, view, name):
+        self.config.add_view(view, name=name)
 
     def test_call(self):
         response1 = DummyResponse()
         response1.app_iter = ['Response1']
         view1 = make_view(response1)
-        self._registerView(view1, 'view1', None, None)
+        self._registerView(view1, 'view1')
 
         response2 = DummyResponse()
         response2.app_iter = ['Response2']
         view2 = make_view(response2)
-        self._registerView(view2, 'view2', None, None)
+        self._registerView(view2, 'view2')
 
         from repoze.bfg.viewgroup.group import ViewGroup
 
         group = ViewGroup('viewgroup', ['view1', 'view2'])
-        self._registerView(group, 'viewgroup', None, None)
+        self._registerView(group, 'viewgroup')
 
         context = DummyContext()
         request = DummyRequest()
+        request.registry = self.config.registry 
         provider = self._makeOne(context, request)
         self.assertEqual(provider('view1'), 'Response1')
         self.assertEqual(provider('view2'), 'Response2')
         self.assertEqual(provider('viewgroup'), 'Response1Response2')
 
-class TestFixtureApp(unittest.TestCase, PlacelessSetup):
+
+class TestFixtureApp(unittest.TestCase):
     def setUp(self):
-        PlacelessSetup.setUp(self)
+        from repoze.bfg.configuration import Configurator
+        from repoze.bfg.viewgroup.tests import fixtureapp
+        self.config = Configurator(package=fixtureapp)
+        self.config.hook_zca()
 
     def tearDown(self):
-        PlacelessSetup.tearDown(self)
+        self.config.end()
 
-    def test_registry_actions_can_be_pickled_and_unpickled(self):
-        import repoze.bfg.viewgroup.tests.fixtureapp as package
-        from zope.configuration import config
-        from zope.configuration import xmlconfig
-        context = config.ConfigurationMachine()
-        xmlconfig.registerCommonDirectives(context)
-        context.package = package
-        xmlconfig.include(context, 'configure.zcml', package)
-        context.execute_actions(clear=False)
-        actions = context.actions
-        import cPickle
-        dumped = cPickle.dumps(actions, -1)
-        new = cPickle.loads(dumped)
-        self.assertEqual(len(actions), len(new))
+    def test_it(self):
+        self.config.load_zcml('configure.zcml')
 
 class DummyRequest:
-    pass
+    from zope.interface import implements
+    from repoze.bfg.interfaces import IRequest
+    implements(IRequest)
 
 class DummyContext:
     pass
@@ -218,6 +173,7 @@ class Dummy:
     pass
 
 class DummyContext:
+    package = None
     def __init__(self):
         self.actions = []
         self.info = None
@@ -228,11 +184,10 @@ class DummyContext:
         fixtures = os.path.join(here, 'fixtures')
         return os.path.join(fixtures, name)
 
-    def action(self, discriminator, callable, args):
+    def action(self, discriminator, callable):
         self.actions.append(
             {'discriminator':discriminator,
-             'callable':callable,
-             'args':args}
+             'callable':callable}
             )
 
 class IDummy(Interface):

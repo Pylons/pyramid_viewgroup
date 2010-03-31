@@ -21,7 +21,6 @@
     name="group"
     viewnames="one two"
     for=".models.IFixture"
-    request_type=".views.IDummy"
    />
 
 </configure>

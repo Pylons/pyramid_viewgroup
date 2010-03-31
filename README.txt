@@ -54,10 +54,9 @@ Create a ``bfg:viewgroup`` registration in ZCML via the
     name="tabs_group"
     viewnames="login_tab content_tab"
     for=".interfaces.ISite"
-    request_type="repoze.bfg.interfaces.IRequest"
    />
 
-The consitutient attributes of this directive are:
+The consituent attributes of this directive are:
 
 ``name`` -- The name by which the viewgroup can be found via traversal
   or programmatic view execution.  This attribute has the same meaning
@@ -71,18 +70,13 @@ The consitutient attributes of this directive are:
   This attribute has the same meaning as its counterpart in
   ``bfg:view`` directive.
 
-``request_type`` -- The "model" interface which this view is
-  registered for.  This attribute has the same meaning as its
-  counterpart in ``bfg:view`` directive.
+The ``for`` argument is optional; it defaults to ``None``.  The
+``name`` argument is also optional.  It defaults to the empty string
+(indicating the default view).
 
-The ``for`` and ``request_type`` arguments are optional; they default
-to ``zope.interface.Interface`` and ``repoze.bfg.interfaces.IRequest``
-respectively.  The ``name`` argument is also optional.  It defaults to
-the empty string (indicating the default view).
-
-Viewgroups registered wih a ``name``, ``for`` and ``request_type``
-will conflict with views registered with the same arguments, so it's
-wise to name your viewgroups differently than your views.
+Viewgroups registered wih a ``name`` and a ``for`` and will conflict
+with views registered with the same arguments, so it's wise to name
+your viewgroups differently than your views.
 
 A viewgroup can refer to another viewgroup in its ``viewname``
 argument as necessary (although this is insane).
@@ -106,11 +100,13 @@ instance of ``Provider`` can be constructed and passed into a template
 rendering so it may be used ala the ``provider:`` expression type in
 Zope 3.  For example, this view might render a template::
 
+  from repoze.bfg.view import bfg_view
+
+  @bfg_view(template='templates/mytemplate.pt')
   def myview(context, request):
       from repoze.bfg.viewgroup.group import Provider
       provider = Provider(context, request)
-      return render_template_to_response('templates/mytemplate.pt',
-                                         provider=provider)
+      return {'provider':provider}
 
 The template being rendered can use the provider to "fill slots" by
 passing in view or viewgroup names as necessary, e.g.::
