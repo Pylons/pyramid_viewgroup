@@ -126,6 +126,3 @@ Reporting Bugs / Development Versions
 
 Visit http://bugs.repoze.org to report bugs.  Visit
 http://svn.repoze.org to download development or tagged versions.
-
-
-

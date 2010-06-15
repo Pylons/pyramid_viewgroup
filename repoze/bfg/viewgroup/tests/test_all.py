@@ -29,7 +29,7 @@ class TestViewGroupDirective(unittest.TestCase):
         class IFoo:
             pass
         def view(context, request):
-            pass
+            """ """
         f(context, 'viewgroup', ['a', 'b', 'c'], IFoo)
         actions = context.actions
 
@@ -100,6 +100,26 @@ class TestViewGroup(unittest.TestCase):
         request.registry = self.config.registry
         response = group(context, request)
         self.assertEqual(''.join(response.app_iter), 'Response1Response2')
+
+    def test_one_notpermitted(self):
+        from repoze.bfg.exceptions import Forbidden
+        self._registerSecurityPolicy()
+
+        def view1(context, request):
+            raise Forbidden
+        self._registerView(view1, 'view1')
+
+        response2 = DummyResponse()
+        response2.app_iter = ['Response2']
+        view2 = make_view(response2)
+        self._registerView(view2, 'view2')
+
+        group = self._makeOne('viewgroup', ['view1', 'view2'])
+        context = DummyContext()
+        request = DummyRequest()
+        request.registry = self.config.registry
+        response = group(context, request)
+        self.assertEqual(''.join(response.app_iter), 'Response2')
 
 class TestProvider(unittest.TestCase):
     def setUp(self):
@@ -177,12 +197,6 @@ class DummyContext:
     def __init__(self):
         self.actions = []
         self.info = None
-
-    def path(self, name):
-        import os
-        here = os.path.dirname(__file__)
-        fixtures = os.path.join(here, 'fixtures')
-        return os.path.join(fixtures, name)
 
     def action(self, discriminator, callable):
         self.actions.append(
