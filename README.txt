@@ -1,7 +1,7 @@
 repoze.bfg.viewgroup
 ====================
 
-``repoze.bfg.viewgroup`` is an extension for :mod:`repoze.bfg` which
+``repoze.bfg.viewgroup`` is an extension for ``repoze.bfg`` which
 makes it possible to make a ``bfg:viewgroup`` declaration in ZCML
 which acts much like ``bfg:view`` inasmuch as it results in a bfg view
 registration.  Unlike a "normal" ``bfg:view`` registration, however, a
