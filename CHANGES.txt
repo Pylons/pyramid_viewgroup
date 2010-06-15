@@ -4,7 +4,7 @@ Changes
 0.3 (2010-06-15)
 ----------------
 
-- Make compatible with BFG 1.2.
+- Make compatible with BFG 1.2; first PyPI release.
 
 0.2
 ---
