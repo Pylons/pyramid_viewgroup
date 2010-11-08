@@ -12,7 +12,7 @@
 #
 ##############################################################################
 
-__version__ = '0.0'
+__version__ = '0.1'
 
 import os
 
@@ -31,7 +31,7 @@ setup(name='pyramid_viewgroup',
         "Programming Language :: Python",
         "Framework :: Pylons",
         ],
-      keywords='web wsgi pyramid content provider',
+      keywords='web wsgi pyramid pylons zope3 content provider',
       author="Chris McDonough, Agendaless Consulting",
       author_email="pylons-discuss@googlegroups.com",
       url="http://docs.pylonshq.com",

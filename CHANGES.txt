@@ -1,7 +1,4 @@
-Changes
-=======
-
-Next release
-------------
+0.1 (2010-11-08)
+----------------
 
 - Forked from repoze.bfg.viewgroup 0.3.
