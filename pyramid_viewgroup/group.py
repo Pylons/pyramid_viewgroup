@@ -2,9 +2,9 @@ import itertools
 
 from webob import Response
 
-from repoze.bfg.exceptions import Forbidden
-from repoze.bfg.view import render_view_to_iterable
-from repoze.bfg.view import render_view
+from pyramid.exceptions import Forbidden
+from pyramid.view import render_view_to_iterable
+from pyramid.view import render_view
 
 class ViewGroup(object):
     def __init__(self, name, viewnames):

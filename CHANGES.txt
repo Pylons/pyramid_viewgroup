@@ -1,19 +1,7 @@
 Changes
 =======
 
-0.3 (2010-06-15)
-----------------
+Next release
+------------
 
-- Make compatible with BFG 1.2; first PyPI release.
-
-0.2
----
-
-- Changes to support upcoming BFG release (which does not require
-  zope.security, so we don't either).
-
-0.1
----
-
-- Initial release.
-
+- Forked from repoze.bfg.viewgroup 0.3.

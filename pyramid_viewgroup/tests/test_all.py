@@ -4,7 +4,7 @@ from zope.interface import Interface
 
 class TestViewGroupDirective(unittest.TestCase):
     def setUp(self):
-        from repoze.bfg.configuration import Configurator
+        from pyramid.configuration import Configurator
         self.config = Configurator()
         self.config.hook_zca()
 
@@ -12,7 +12,7 @@ class TestViewGroupDirective(unittest.TestCase):
         self.config.end()
 
     def _getFUT(self):
-        from repoze.bfg.viewgroup.zcml import viewgroup
+        from pyramid_viewgroup.zcml import viewgroup
         return viewgroup
 
     def test_no_viewnames(self):
@@ -22,8 +22,8 @@ class TestViewGroupDirective(unittest.TestCase):
         self.assertRaises(ConfigurationError, f, context)
 
     def test_call(self):
-        from repoze.bfg.interfaces import IView
-        from repoze.bfg.interfaces import IRequest
+        from pyramid.interfaces import IView
+        from pyramid.interfaces import IRequest
         f = self._getFUT()
         context = DummyContext()
         class IFoo:
@@ -45,7 +45,7 @@ class TestViewGroupDirective(unittest.TestCase):
 
 class TestViewGroup(unittest.TestCase):
     def setUp(self):
-        from repoze.bfg.configuration import Configurator
+        from pyramid.configuration import Configurator
         self.config = Configurator()
         self.config.begin()
         self.config.hook_zca()
@@ -54,7 +54,7 @@ class TestViewGroup(unittest.TestCase):
         self.config.end()
 
     def _getTargetClass(self):
-        from repoze.bfg.viewgroup.group import ViewGroup
+        from pyramid_viewgroup.group import ViewGroup
         return ViewGroup
 
     def _registerSecurityPolicy(self):
@@ -102,7 +102,7 @@ class TestViewGroup(unittest.TestCase):
         self.assertEqual(''.join(response.app_iter), 'Response1Response2')
 
     def test_one_notpermitted(self):
-        from repoze.bfg.exceptions import Forbidden
+        from pyramid.exceptions import Forbidden
         self._registerSecurityPolicy()
 
         def view1(context, request):
@@ -123,7 +123,7 @@ class TestViewGroup(unittest.TestCase):
 
 class TestProvider(unittest.TestCase):
     def setUp(self):
-        from repoze.bfg.configuration import Configurator
+        from pyramid.configuration import Configurator
         self.config = Configurator()
         self.config.hook_zca()
 
@@ -131,7 +131,7 @@ class TestProvider(unittest.TestCase):
         self.config.end()
 
     def _getTargetClass(self):
-        from repoze.bfg.viewgroup.group import Provider
+        from pyramid_viewgroup.group import Provider
         return Provider
 
     def _makeOne(self, context, request):
@@ -151,7 +151,7 @@ class TestProvider(unittest.TestCase):
         view2 = make_view(response2)
         self._registerView(view2, 'view2')
 
-        from repoze.bfg.viewgroup.group import ViewGroup
+        from pyramid_viewgroup.group import ViewGroup
 
         group = ViewGroup('viewgroup', ['view1', 'view2'])
         self._registerView(group, 'viewgroup')
@@ -167,8 +167,8 @@ class TestProvider(unittest.TestCase):
 
 class TestFixtureApp(unittest.TestCase):
     def setUp(self):
-        from repoze.bfg.configuration import Configurator
-        from repoze.bfg.viewgroup.tests import fixtureapp
+        from pyramid.configuration import Configurator
+        from pyramid_viewgroup.tests import fixtureapp
         self.config = Configurator(package=fixtureapp)
         self.config.hook_zca()
 
@@ -180,7 +180,7 @@ class TestFixtureApp(unittest.TestCase):
 
 class DummyRequest:
     from zope.interface import implements
-    from repoze.bfg.interfaces import IRequest
+    from pyramid.interfaces import IRequest
     implements(IRequest)
 
 class DummyContext:

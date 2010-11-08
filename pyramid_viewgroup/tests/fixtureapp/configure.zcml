@@ -1,0 +1,24 @@
+<configure xmlns="http://pylonshq.com/pyramid">
+
+  <include package="pyramid.includes" />
+  <include package="pyramid_viewgroup" file="meta.zcml"/>
+
+  <view
+      name="one"
+      view=".views.fixture_view"
+      for=".models.IFixture"
+      />
+
+  <view
+      name="two"
+      view=".views.fixture_view"
+      for=".models.IFixture"
+      />
+
+  <viewgroup
+    name="group"
+    viewnames="one two"
+    for=".models.IFixture"
+   />
+
+</configure>

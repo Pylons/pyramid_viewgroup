@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2008 Agendaless Consulting and Contributors.
+# Copyright (c) 2010 Agendaless Consulting and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the BSD-like license at
@@ -12,7 +12,7 @@
 #
 ##############################################################################
 
-__version__ = '0.3'
+__version__ = '0.0'
 
 import os
 
@@ -22,27 +22,26 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.txt')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
-setup(name='repoze.bfg.viewgroup',
+setup(name='pyramid_viewgroup',
       version=__version__,
-      description='An anlologue of Zope 3 "content providers" for repoze.bfg',
+      description='An anlologue of Zope 3 "content providers" for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
         "Intended Audience :: Developers",
         "Programming Language :: Python",
-        "Framework :: BFG",
+        "Framework :: Pylons",
         ],
-      keywords='web wsgi zope content provider',
-      author="Agendaless Consulting",
-      author_email="repoze-dev@lists.repoze.org",
-      url="http://www.repoze.org",
+      keywords='web wsgi pyramid content provider',
+      author="Chris McDonough, Agendaless Consulting",
+      author_email="pylons-discuss@googlegroups.com",
+      url="http://docs.pylonshq.com",
       license="BSD-derived (http://www.repoze.org/LICENSE.txt)",
       packages=find_packages(),
       include_package_data=True,
-      namespace_packages=['repoze', 'repoze.bfg'],
       zip_safe=False,
-      tests_require = ['repoze.bfg'],
-      install_requires=['repoze.bfg'],
-      test_suite="repoze.bfg.viewgroup",
+      tests_require = ['pyramid'],
+      install_requires=['pyramid'],
+      test_suite="pyramid_viewgroup",
       entry_points = """\
       """
       )

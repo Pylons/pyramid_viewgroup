@@ -6,11 +6,11 @@ from zope.configuration.fields import Tokens
 
 from zope.schema import TextLine
 
-from repoze.bfg.interfaces import IView
+from pyramid.interfaces import IView
 
-from repoze.bfg.configuration import Configurator
-from repoze.bfg.viewgroup.group import ViewGroup
-from repoze.bfg.threadlocal import get_current_registry
+from pyramid.configuration import Configurator
+from pyramid_viewgroup.group import ViewGroup
+from pyramid.threadlocal import get_current_registry
 
 """
 <bfg:viewgroup
