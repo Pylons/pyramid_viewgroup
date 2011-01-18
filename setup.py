@@ -21,7 +21,7 @@ README = open(os.path.join(here, 'README.txt')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 setup(name='pyramid_viewgroup',
-      version=__version__,
+      version='0.2',
       description='An anlologue of Zope 3 "content providers" for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
