@@ -4,8 +4,9 @@ from zope.interface import Interface
 
 class TestViewGroupDirective(unittest.TestCase):
     def setUp(self):
-        from pyramid.configuration import Configurator
-        self.config = Configurator()
+        from pyramid.config import Configurator
+        self.config = Configurator(autocommit=True)
+        self.config.include('pyramid_zcml')
         self.config.hook_zca()
 
     def tearDown(self):
@@ -22,10 +23,14 @@ class TestViewGroupDirective(unittest.TestCase):
         self.assertRaises(ConfigurationError, f, context)
 
     def test_call(self):
+        from pyramid.registry import Registry
         from pyramid.interfaces import IView
         from pyramid.interfaces import IRequest
         f = self._getFUT()
         context = DummyContext()
+        context.registry = Registry()
+        context.package = None
+        context.autocommit = False
         class IFoo:
             pass
         def view(context, request):
@@ -45,8 +50,9 @@ class TestViewGroupDirective(unittest.TestCase):
 
 class TestViewGroup(unittest.TestCase):
     def setUp(self):
-        from pyramid.configuration import Configurator
-        self.config = Configurator()
+        from pyramid.config import Configurator
+        self.config = Configurator(autocommit=True)
+        self.config.include('pyramid_zcml')
         self.config.begin()
         self.config.hook_zca()
 
@@ -123,8 +129,9 @@ class TestViewGroup(unittest.TestCase):
 
 class TestProvider(unittest.TestCase):
     def setUp(self):
-        from pyramid.configuration import Configurator
-        self.config = Configurator()
+        from pyramid.config import Configurator
+        self.config = Configurator(autocommit=True)
+        self.config.include('pyramid_zcml')
         self.config.hook_zca()
 
     def tearDown(self):
@@ -167,9 +174,10 @@ class TestProvider(unittest.TestCase):
 
 class TestFixtureApp(unittest.TestCase):
     def setUp(self):
-        from pyramid.configuration import Configurator
+        from pyramid.config import Configurator
         from pyramid_viewgroup.tests import fixtureapp
-        self.config = Configurator(package=fixtureapp)
+        self.config = Configurator(package=fixtureapp, autocommit=True)
+        self.config.include('pyramid_zcml')
         self.config.hook_zca()
 
     def tearDown(self):

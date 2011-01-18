@@ -39,8 +39,8 @@ setup(name='pyramid_viewgroup',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      tests_require = ['pyramid'],
-      install_requires=['pyramid'],
+      tests_require = ['pyramid>=1.0a10', 'pyramid_zcml'],
+      install_requires=['pyramid>=1.0a10', 'pyramid_zcml'],
       test_suite="pyramid_viewgroup",
       entry_points = """\
       """

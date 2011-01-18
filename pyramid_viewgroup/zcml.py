@@ -8,7 +8,7 @@ from zope.schema import TextLine
 
 from pyramid.interfaces import IView
 
-from pyramid.configuration import Configurator
+from pyramid.config import Configurator
 from pyramid_viewgroup.group import ViewGroup
 from pyramid.threadlocal import get_current_registry
 
@@ -30,10 +30,10 @@ def viewgroup(_context,
         raise ConfigurationError('"viewnames" attribute was not specified')
 
     viewgroup = ViewGroup(name, viewnames)
-    reg = get_current_registry()
+
+    config = Configurator.with_context(_context)
 
     def register():
-        config = Configurator(reg, package=_context.package)
         config.add_view(viewgroup, name=name, context=for_, _info=_context.info)
 
     discriminator = ('view', for_, name, None, IView, None,
