@@ -1,6 +1,8 @@
 Next release
 ------------
 
+- Make compatible with Pyramid 1.0a10+.
+
 0.1 (2010-11-08)
 ----------------
 
