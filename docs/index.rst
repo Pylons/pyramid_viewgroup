@@ -36,7 +36,7 @@ Usage
 
 To use a viewgroup, you must:
 
-#. Use ``config.include('pyramid_viewgroup') .
+#. Use ``config.include('pyramid_viewgroup')``.
 
 #. Subsequently call ``config.add_viewgroup(name, viewnames)`` or create a
    ZCML registration which registers a viewgroup.

@@ -1,5 +1,5 @@
-Next release
-------------
+0.3 (2011-02-10)
+----------------
 
 - Basically didn't actually work, due to too much deferring of calling
   ``add_view``.
