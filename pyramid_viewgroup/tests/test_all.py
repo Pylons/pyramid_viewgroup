@@ -2,10 +2,11 @@ import unittest
 
 from zope.interface import Interface
 
+from pyramid import testing
+
 class TestViewGroupDirective(unittest.TestCase):
     def setUp(self):
-        from pyramid.config import Configurator
-        self.config = Configurator(autocommit=True)
+        self.config = testing.setUp()
         self.config.include('pyramid_zcml')
         self.config.hook_zca()
 
@@ -41,7 +42,7 @@ class TestViewGroupDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
 
         action = actions[0]
-        registrar = action['callable']
+        registrar = action[1]
         registrar()
         reg = self.config.registry
         wrapper = reg.adapters.lookup((IRequest, Interface), IView,
@@ -50,8 +51,7 @@ class TestViewGroupDirective(unittest.TestCase):
 
 class TestViewGroup(unittest.TestCase):
     def setUp(self):
-        from pyramid.config import Configurator
-        self.config = Configurator(autocommit=True)
+        self.config = testing.setUp()
         self.config.include('pyramid_zcml')
         self.config.begin()
         self.config.hook_zca()
@@ -60,7 +60,7 @@ class TestViewGroup(unittest.TestCase):
         self.config.end()
 
     def _getTargetClass(self):
-        from pyramid_viewgroup.group import ViewGroup
+        from pyramid_viewgroup import ViewGroup
         return ViewGroup
 
     def _registerSecurityPolicy(self):
@@ -129,8 +129,7 @@ class TestViewGroup(unittest.TestCase):
 
 class TestProvider(unittest.TestCase):
     def setUp(self):
-        from pyramid.config import Configurator
-        self.config = Configurator(autocommit=True)
+        self.config = testing.setUp()
         self.config.include('pyramid_zcml')
         self.config.hook_zca()
 
@@ -138,7 +137,7 @@ class TestProvider(unittest.TestCase):
         self.config.end()
 
     def _getTargetClass(self):
-        from pyramid_viewgroup.group import Provider
+        from pyramid_viewgroup import Provider
         return Provider
 
     def _makeOne(self, context, request):
@@ -158,7 +157,7 @@ class TestProvider(unittest.TestCase):
         view2 = make_view(response2)
         self._registerView(view2, 'view2')
 
-        from pyramid_viewgroup.group import ViewGroup
+        from pyramid_viewgroup import ViewGroup
 
         group = ViewGroup('viewgroup', ['view1', 'view2'])
         self._registerView(group, 'viewgroup')
@@ -170,6 +169,17 @@ class TestProvider(unittest.TestCase):
         self.assertEqual(provider('view1'), 'Response1')
         self.assertEqual(provider('view2'), 'Response2')
         self.assertEqual(provider('viewgroup'), 'Response1Response2')
+
+class Test_includeme(unittest.TestCase):
+    def _callFUT(self, config):
+        from pyramid_viewgroup import includeme
+        includeme(config)
+
+    def test_it(self):
+        from pyramid_viewgroup import add_viewgroup
+        config = DummyConfigurator()
+        self._callFUT(config)
+        self.assertEqual(config.add_viewgroup, add_viewgroup)
 
 
 class TestFixtureApp(unittest.TestCase):
@@ -206,12 +216,6 @@ class DummyContext:
         self.actions = []
         self.info = None
 
-    def action(self, discriminator, callable):
-        self.actions.append(
-            {'discriminator':discriminator,
-             'callable':callable}
-            )
-
 class IDummy(Interface):
     pass
 
@@ -226,3 +230,7 @@ def make_view(response):
         return response
     return view
 
+class DummyConfigurator(object):
+    def add_directive(self, name, directive):
+        self.__dict__[name] = directive
+        

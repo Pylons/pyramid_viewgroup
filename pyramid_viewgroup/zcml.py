@@ -6,17 +6,15 @@ from zope.configuration.fields import Tokens
 
 from zope.schema import TextLine
 
-from pyramid.interfaces import IView
-
 from pyramid.config import Configurator
-from pyramid_viewgroup.group import ViewGroup
-from pyramid.threadlocal import get_current_registry
+
+from pyramid_viewgroup import add_viewgroup
 
 """
-<bfg:viewgroup
+<viewgroup
   name="headers"
   viewnames="header1 header2 header3"
-  for=".interfaces.IContent"
+  context=".interfaces.IContent"
 />
 """
 
@@ -24,26 +22,20 @@ def viewgroup(_context,
               name="",
               viewnames=None,
               for_=None,
+              context=None,
               ):
 
     if not viewnames:
         raise ConfigurationError('"viewnames" attribute was not specified')
 
-    viewgroup = ViewGroup(name, viewnames)
-
     config = Configurator.with_context(_context)
 
-    def register():
-        config.add_view(viewgroup, name=name, context=for_, _info=_context.info)
+    if not hasattr(config, 'add_viewgroup'):
+        config.add_directive('add_viewgroup', add_viewgroup)
 
-    discriminator = ('view', for_, name, None, IView, None,
-                     None, None, None, None, None, None, None, None)
-    
+    context = context or for_
 
-    _context.action(
-        discriminator = discriminator,
-        callable = register,
-        )
+    config.add_viewgroup(name, viewnames, context=context)
 
 class IViewGroupDirective(Interface):
     name = TextLine(
@@ -52,10 +44,12 @@ class IViewGroupDirective(Interface):
         required=False,
         )
 
-    for_ = GlobalObject(
+    context = GlobalObject(
         title=u"The context interface this viewgroup is for.",
         required=False
         )
+
+    for_ = context # bw compat
 
     viewnames = Tokens(
         title=u"",
