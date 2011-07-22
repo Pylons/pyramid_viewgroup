@@ -1,3 +1,12 @@
+Next release
+------------
+
+- Remove install-time dependency on pyramid_zcml.
+
+- Add tox.ini for Jenkins testing.
+
+- Pyramid 1.1 compatibility.
+
 0.3 (2011-02-10)
 ----------------
 

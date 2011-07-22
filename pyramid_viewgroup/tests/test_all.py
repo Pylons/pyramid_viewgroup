@@ -1,8 +1,10 @@
 import unittest
 
 from zope.interface import Interface
+from zope.interface import implements
 
 from pyramid import testing
+from pyramid.interfaces import IResponse
 
 class TestViewGroupDirective(unittest.TestCase):
     def setUp(self):
@@ -30,6 +32,7 @@ class TestViewGroupDirective(unittest.TestCase):
         f = self._getFUT()
         context = DummyContext()
         context.registry = Registry()
+        context.registry.settings = {}
         context.package = None
         context.autocommit = False
         class IFoo:
@@ -143,8 +146,8 @@ class TestProvider(unittest.TestCase):
     def _makeOne(self, context, request):
         return self._getTargetClass()(context, request)
 
-    def _registerView(self, view, name):
-        self.config.add_view(view, name=name)
+    def _registerView(self, view, name, **kw):
+        self.config.add_view(view, name=name, **kw)
 
     def test_call(self):
         response1 = DummyResponse()
@@ -221,6 +224,7 @@ class IDummy(Interface):
 
     
 class DummyResponse:
+    implements(IResponse)
     status = '200 OK'
     headerlist = ()
     app_iter = ()

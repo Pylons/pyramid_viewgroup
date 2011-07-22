@@ -1,11 +1,10 @@
 import itertools
 
-from webob import Response
+from pyramid.response import Response
 
 from pyramid.exceptions import Forbidden
 from pyramid.view import render_view_to_iterable
 from pyramid.view import render_view
-from pyramid.interfaces import IView
 
 class ViewGroup(object):
     def __init__(self, name, viewnames):

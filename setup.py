@@ -17,8 +17,13 @@ import os
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.txt')).read()
-CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
+
+try:
+    README = open(os.path.join(here, 'README.txt')).read()
+    CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
+except IOError:
+    README = ''
+    CHANGES = ''
 
 setup(name='pyramid_viewgroup',
       version='0.3',
@@ -38,7 +43,7 @@ setup(name='pyramid_viewgroup',
       include_package_data=True,
       zip_safe=False,
       tests_require = ['pyramid>=1.0a10', 'pyramid_zcml'],
-      install_requires=['pyramid>=1.0a10', 'pyramid_zcml'],
+      install_requires=['pyramid>=1.0a10'],
       test_suite="pyramid_viewgroup",
       entry_points = """\
       """
