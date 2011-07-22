@@ -54,7 +54,7 @@ copyright = '2010, Agendaless Consulting'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '0.3'
+version = '0.4'
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -97,7 +97,7 @@ pygments_style = 'sphinx'
 sys.path.append(os.path.abspath('_themes'))
 html_theme_path = ['_themes']
 html_theme = 'pylons'
-
+html_theme_options = {'github_url':'http://github.com/Pylons/pyramid_viewgroup'}
 # The style sheet to use for HTML and HTML Help pages. A file of that name
 # must exist either in Sphinx' static/ path, or in one of the custom paths
 # given in html_static_path.

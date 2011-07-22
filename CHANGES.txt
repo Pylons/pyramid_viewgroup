@@ -1,5 +1,5 @@
-Next release
-------------
+0.4 (2011-07-22)
+----------------
 
 - Remove install-time dependency on pyramid_zcml.
 

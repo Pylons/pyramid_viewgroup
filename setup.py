@@ -26,7 +26,7 @@ except IOError:
     CHANGES = ''
 
 setup(name='pyramid_viewgroup',
-      version='0.3',
+      version='0.4',
       description='An anlologue of Zope 3 "content providers" for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
