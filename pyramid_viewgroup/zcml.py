@@ -6,9 +6,9 @@ from zope.configuration.fields import Tokens
 
 from zope.schema import TextLine
 
-from pyramid.config import Configurator
-
 from pyramid_viewgroup import add_viewgroup
+
+from pyramid_zcml import with_context
 
 """
 <viewgroup
@@ -28,7 +28,7 @@ def viewgroup(_context,
     if not viewnames:
         raise ConfigurationError('"viewnames" attribute was not specified')
 
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
 
     if not hasattr(config, 'add_viewgroup'):
         config.add_directive('add_viewgroup', add_viewgroup)

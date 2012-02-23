@@ -5,6 +5,7 @@ from zope.interface import implements
 
 from pyramid import testing
 from pyramid.interfaces import IResponse
+from pyramid.config import Configurator
 
 class TestViewGroupDirective(unittest.TestCase):
     def setUp(self):
@@ -34,19 +35,18 @@ class TestViewGroupDirective(unittest.TestCase):
         context.registry = Registry()
         context.registry.settings = {}
         context.package = None
-        context.autocommit = False
+        context.autocommit = True
+        context.config_class = Configurator
+        context.basepath = ''
+        context.includepath = ''
+        context.route_prefix = ''
+        context.introspection = True
         class IFoo:
             pass
         def view(context, request):
             """ """
         f(context, 'viewgroup', ['a', 'b', 'c'], IFoo)
-        actions = context.actions
 
-        self.assertEqual(len(actions), 1)
-
-        action = actions[0]
-        registrar = action[1]
-        registrar()
         reg = self.config.registry
         wrapper = reg.adapters.lookup((IRequest, Interface), IView,
                                       name='viewgroup')
@@ -213,8 +213,13 @@ class DummySecurityPolicy:
 class Dummy:
     pass
 
+class DummyConfigurator(object):
+    def add_directive(self, name, directive):
+        self.__dict__[name] = directive
+        
 class DummyContext:
     package = None
+
     def __init__(self):
         self.actions = []
         self.info = None
@@ -234,7 +239,3 @@ def make_view(response):
         return response
     return view
 
-class DummyConfigurator(object):
-    def add_directive(self, name, directive):
-        self.__dict__[name] = directive
-        

@@ -26,7 +26,7 @@ except IOError:
     CHANGES = ''
 
 setup(name='pyramid_viewgroup',
-      version='0.4',
+      version='0.5',
       description='An anlologue of Zope 3 "content providers" for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
@@ -42,7 +42,7 @@ setup(name='pyramid_viewgroup',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      tests_require = ['pyramid>=1.0a10', 'pyramid_zcml'],
+      tests_require = ['pyramid>=1.0a10', 'pyramid_zcml>=0.9.2'],
       install_requires=['pyramid>=1.0a10'],
       test_suite="pyramid_viewgroup",
       entry_points = """\
