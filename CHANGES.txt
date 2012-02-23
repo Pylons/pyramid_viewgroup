@@ -1,5 +1,5 @@
-Next release
-------------
+0.5 (2012-02-23)
+----------------
 
 - Require pyramid_zcml 0.9.2 (for ``with_context``).
 
