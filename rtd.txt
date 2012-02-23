@@ -1,1 +1,8 @@
 repoze.sphinx.autointerface
+pyramid
+pyramid_zcml
+zope.component
+zope.interface
+zope.configuration
+zope.deprecation
+repoze.lru
