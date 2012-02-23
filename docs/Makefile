@@ -2,7 +2,7 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
+SPHINXOPTS    = -W
 SPHINXBUILD   = sphinx-build
 PAPER         =
 
@@ -25,7 +25,7 @@ help:
 clean:
 	-rm -rf _build/*
 
-html: _themes
+html:
 	mkdir -p _build/html _build/doctrees
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) _build/html
 	@echo
@@ -47,12 +47,24 @@ pickle:
 
 web: pickle
 
-htmlhelp: _themes
+htmlhelp:
 	mkdir -p _build/htmlhelp _build/doctrees
 	$(SPHINXBUILD) -b htmlhelp $(ALLSPHINXOPTS) _build/htmlhelp
 	@echo
 	@echo "Build finished; now you can run HTML Help Workshop with the" \
 	      ".hhp project file in _build/htmlhelp."
+
+latex:
+	mkdir -p _build/latex _build/doctrees
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) _build/latex
+	cp _static/*.png _build/latex
+	./convert_images.sh
+	cp _static/latex-warning.png _build/latex
+	cp _static/latex-note.png _build/latex
+	@echo
+	@echo "Build finished; the LaTeX files are in _build/latex."
+	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
+	      "run these through (pdf)latex."
 
 changes:
 	mkdir -p _build/changes _build/doctrees
@@ -72,5 +84,3 @@ epub:
 	@echo
 	@echo "Build finished. The epub file is in _build/epub."
 
-_themes:
-	cd ..; git submodule update --init; cd docs
